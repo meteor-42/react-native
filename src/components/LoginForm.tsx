@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { Mail, Lock, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -10,6 +11,51 @@ export type Player = {
   email: string;
   role: string;
 };
+
+function usePlayersCount() {
+  const [count, setCount] = useState<number>(0);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchPlayersCount = async () => {
+      const { count, error } = await supabase
+        .from("players")
+        .select("*", { count: "exact", head: true });
+
+      if (!error && count !== null) {
+        setCount(count);
+      }
+      setLoading(false);
+    };
+
+    fetchPlayersCount();
+  }, []);
+
+  return { count, loading };
+}
+
+export function PlayersCounter() {
+  const { count, loading } = usePlayersCount();
+
+  if (loading) {
+    return <div className="text-sm text-muted-foreground">Загрузка...</div>;
+  }
+
+  return (
+    <div className="space-y-2 text-sm text-muted-foreground">
+      <div className="flex items-center justify-center">
+        <div className="flex-1 border-t border-border" />
+      </div>
+      <div className="text-center space-y-1">
+        <p className="flex items-center justify-center gap-2">
+          <Users className="h-4 w-4" />
+          Зарегистрировано: <span className="font-semibold text-foreground">{count}</span>
+        </p>
+        <p>Регистрация — в телеграме <span className="font-medium text-primary">@fabiocapello</span></p>
+      </div>
+    </div>
+  );
+}
 
 export function LoginForm({
   onSuccess,
@@ -51,7 +97,7 @@ export function LoginForm({
   return (
     <form onSubmit={handleLogin} className="space-y-4">
       <div className="space-y-2">
-        <Label htmlFor="email">Email</Label>
+        <Label htmlFor="email">E-mail</Label>
         <Input
           id="email"
           type="email"
@@ -60,6 +106,7 @@ export function LoginForm({
             setEmail(e.target.value)
           }
           placeholder="you@example.com"
+          icon={<Mail className="h-4 w-4" />}
           required
         />
       </div>
@@ -73,13 +120,14 @@ export function LoginForm({
             setPassword(e.target.value)
           }
           placeholder="••••••••"
+          icon={<Lock className="h-4 w-4" />}
           required
         />
       </div>
       <Button type="submit" className="w-full" disabled={loading}>
         {loading ? "Вход..." : "Войти"}
       </Button>
-      {error && <p className="text-sm text-red-500">{error}</p>}
+      {error && <p className="text-sm text-destructive">{error}</p>}
     </form>
   );
 }
