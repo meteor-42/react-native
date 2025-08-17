@@ -12,7 +12,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-export default function AuthScreen({ onLogin }) {
+export default function AuthScreen({ onLogin, version }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -86,7 +86,7 @@ export default function AuthScreen({ onLogin }) {
 
           <View style={styles.footer}>
             <Text style={styles.footerText}>
-              Авторизация через базу данных
+              Версия приложения: {version}
             </Text>
           </View>
         </View>
