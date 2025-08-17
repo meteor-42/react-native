@@ -125,26 +125,16 @@ export default function PlayersManager({
           <Text style={styles.playerNumber}>{playerNumber}</Text>
         </View>
         <View style={styles.playerInfo}>
-          <View style={styles.playerMainInfo}>
-            <Text style={styles.playerName} numberOfLines={1}>{item.name}</Text>
-            <View style={styles.roleContainer}>
-              <Text style={[styles.roleText, item.role === 'admin' && styles.adminRoleText]}>
-                {item.role === 'admin' ? 'АДМИН' : 'ИГРОК'}
-              </Text>
-            </View>
-          </View>
-          <Text style={styles.playerEmail} numberOfLines={1}>{item.email}</Text>
-          <View style={styles.playerStats}>
-            <Text style={styles.playerStatText}>Очки: {item.points}</Text>
-            <Text style={styles.playerStatText}>Прогнозы: {item.correct_predictions}/{item.total_predictions}</Text>
-          </View>
+          <Text style={styles.playerName}>{item.name}</Text>
+          <Text style={styles.playerEmail}>{item.email}</Text>
+          <Text style={styles.playerStatText}>Очки: {item.points} • Прогнозы: {item.correct_predictions}/{item.total_predictions}</Text>
         </View>
         <View style={styles.playerActionButtons}>
-          <TouchableOpacity style={styles.iconBtn} onPress={() => openEditPlayer(item)}>
-            <Text style={styles.iconBtnText}>✎</Text>
+          <TouchableOpacity style={styles.btn} onPress={() => openEditPlayer(item)}>
+            <Text style={styles.btnText}>РЕДАКТИРОВАТЬ</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={[styles.iconBtn, styles.iconBtnDanger]} onPress={() => deletePlayer(item.id)}>
-            <Text style={styles.iconBtnText}>✕</Text>
+          <TouchableOpacity style={[styles.btn, styles.btnSecondary]} onPress={() => deletePlayer(item.id)}>
+            <Text style={styles.btnSecondaryText}>УДАЛИТЬ</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -296,22 +286,14 @@ const styles = StyleSheet.create({
   iconButton: { width: 30, height: 30, borderWidth: 1, borderColor: '#333', alignItems: 'center', justifyContent: 'center' },
   iconText: { color: '#fff', fontSize: 16, fontWeight: '300' },
   loadingText: { color: '#666', textAlign: 'center', fontStyle: 'italic' },
-  playerItem: { flexDirection: 'row', alignItems: 'flex-start', paddingVertical: 15, borderBottomWidth: 1, borderBottomColor: '#111' },
-  playerNumberContainer: { width: 30, marginRight: 15, paddingTop: 2 },
+  playerItem: { flexDirection: 'row', alignItems: 'center', paddingVertical: 15, borderBottomWidth: 1, borderBottomColor: '#111' },
+  playerNumberContainer: { width: 30, marginRight: 15 },
   playerNumber: { fontSize: 12, color: '#666', fontWeight: '300' },
-  playerInfo: { flex: 1, paddingRight: 10 },
-  playerMainInfo: { flexDirection: 'row', alignItems: 'center', marginBottom: 4 },
-  playerName: { fontSize: 16, color: '#fff', fontWeight: '300', flex: 1, marginRight: 10 },
-  roleContainer: { paddingHorizontal: 6, paddingVertical: 2, backgroundColor: '#333' },
-  roleText: { fontSize: 8, color: '#fff', fontWeight: '500', letterSpacing: 0.5 },
-  adminRoleText: { backgroundColor: '#fff', color: '#000' },
-  playerEmail: { fontSize: 12, color: '#666', marginBottom: 6 },
-  playerStats: { flexDirection: 'row', gap: 15 },
+  playerInfo: { flex: 1, marginBottom: 10 },
+  playerName: { fontSize: 16, color: '#fff', fontWeight: '300', marginBottom: 3 },
+  playerEmail: { fontSize: 12, color: '#666', marginBottom: 5 },
   playerStatText: { fontSize: 10, color: '#888' },
-  playerActionButtons: { flexDirection: 'row', gap: 8, alignItems: 'flex-start', paddingTop: 2 },
-  iconBtn: { width: 28, height: 28, borderWidth: 1, borderColor: '#333', alignItems: 'center', justifyContent: 'center' },
-  iconBtnDanger: { borderColor: '#666' },
-  iconBtnText: { color: '#fff', fontSize: 12 },
+  playerActionButtons: { flexDirection: 'row', gap: 10, justifyContent: 'flex-end' },
   btn: { backgroundColor: 'transparent', borderWidth: 1, borderColor: '#333', paddingHorizontal: 12, paddingVertical: 8 },
   btnText: { color: '#fff', fontSize: 10, letterSpacing: 1 },
   btnSecondary: { borderColor: '#666' },
