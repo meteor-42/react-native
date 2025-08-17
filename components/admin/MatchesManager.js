@@ -136,41 +136,49 @@ export default function MatchesManager({
   };
   const formatTime = (s) => { try { return s ? s.slice(0, 5) : ''; } catch { return s; } };
 
-  const renderItem = ({ item }) => (
-    <View style={styles.matchItem}>
-      <View style={styles.matchHeader}>
-        <View style={styles.matchInfo}>
-          <Text style={styles.matchTeams}>{item.home_team} — {item.away_team}</Text>
-          <View style={styles.matchMeta}>
-            <Text style={styles.matchMetaText}>{formatDate(item.match_date)} • {formatTime(item.match_time)}</Text>
-            {item.league ? <Text style={styles.matchMetaText}> • {item.league}</Text> : null}
-            {item.tour ? <Text style={styles.matchMetaText}> • Тур {item.tour}</Text> : null}
+  const renderItem = ({ item, index }) => {
+    const matchNumber = (matchesPage - 1) * matchesPerPage + index + 1;
+    return (
+      <View style={styles.matchItem}>
+        <View style={styles.matchHeader}>
+          <View style={styles.matchNumberContainer}>
+            <Text style={styles.matchNumber}>{matchNumber}</Text>
           </View>
-          {(item.home_score !== null && item.away_score !== null) && (
-            <Text style={styles.matchScore}>{item.home_score} : {item.away_score}</Text>
-          )}
-        </View>
-        <View style={{ alignItems: 'flex-end' }}>
-          <View style={[styles.statusBadge, { backgroundColor: getStatusColor(item.status) }]}>
-            <Text style={styles.statusText}>{getStatusText(item.status)}</Text>
-          </View>
-          {!item.is_visible && (
-            <View style={styles.hiddenBadge}>
-              <Text style={styles.hiddenText}>СКРЫТ</Text>
+          <View style={styles.matchInfo}>
+            <Text style={styles.matchTeams}>{item.home_team} — {item.away_team}</Text>
+            <View style={styles.matchMeta}>
+              <Text style={styles.matchMetaText}>{formatDate(item.match_date)} • {formatTime(item.match_time)}</Text>
+              {item.league ? <Text style={styles.matchMetaText}> • {item.league}</Text> : null}
+              {item.tour ? <Text style={styles.matchMetaText}> • Тур {item.tour}</Text> : null}
             </View>
-          )}
+            {(item.home_score !== null && item.away_score !== null) && (
+              <Text style={styles.matchScore}>{item.home_score} : {item.away_score}</Text>
+            )}
+          </View>
+          <View style={styles.matchBadges}>
+            <View style={styles.badgeRow}>
+              <View style={[styles.statusBadge, { backgroundColor: getStatusColor(item.status) }]}>
+                <Text style={styles.statusText}>{getStatusText(item.status)}</Text>
+              </View>
+              {!item.is_visible && (
+                <View style={styles.hiddenBadge}>
+                  <Text style={styles.hiddenText}>СКРЫТ</Text>
+                </View>
+              )}
+            </View>
+          </View>
+        </View>
+        <View style={styles.matchActions}>
+          <TouchableOpacity style={styles.iconBtn} onPress={() => openEditMatch(item)}>
+            <Text style={styles.iconBtnText}>✎</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={[styles.iconBtn, styles.iconBtnDanger]} onPress={() => deleteMatch(item.id)}>
+            <Text style={styles.iconBtnText}>✕</Text>
+          </TouchableOpacity>
         </View>
       </View>
-      <View style={styles.matchActions}>
-        <TouchableOpacity style={styles.btn} onPress={() => openEditMatch(item)}>
-          <Text style={styles.btnText}>РЕДАКТИРОВАТЬ</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={[styles.btn, styles.btnSecondary]} onPress={() => deleteMatch(item.id)}>
-          <Text style={styles.btnSecondaryText}>УДАЛИТЬ</Text>
-        </TouchableOpacity>
-      </View>
-    </View>
-  );
+    );
+  };
 
   const Pagination = () => {
     if (totalMatchesPages <= 1) return null;
@@ -198,15 +206,17 @@ export default function MatchesManager({
 
   return (
     <View style={styles.section}>
-      <Text style={styles.sectionTitle}>УПРАВЛЕНИЕ МАТЧАМИ</Text>
-
-      <TouchableOpacity style={styles.actionButton} onPress={() => setShowAddMatchModal(true)}>
-        <Text style={styles.actionButtonText}>ДОБАВИТЬ МАТЧ</Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity style={styles.actionButton} onPress={fetchMatches}>
-        <Text style={styles.actionButtonText}>ОБНОВИТЬ СПИСОК</Text>
-      </TouchableOpacity>
+      <View style={styles.sectionHeader}>
+        <Text style={styles.sectionTitle}>УПРАВЛЕНИЕ МАТЧАМИ</Text>
+        <View style={styles.actionIcons}>
+          <TouchableOpacity style={styles.iconButton} onPress={() => setShowAddMatchModal(true)}>
+            <Text style={styles.iconText}>+</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.iconButton} onPress={fetchMatches}>
+            <Text style={styles.iconText}>↻</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
 
       {matchesLoading ? (
         <Text style={styles.loadingText}>Загрузка матчей...</Text>
@@ -322,26 +332,31 @@ export default function MatchesManager({
 
 const styles = StyleSheet.create({
   section: { marginBottom: 40 },
-  sectionTitle: { fontSize: 14, color: '#fff', letterSpacing: 2, fontWeight: '300', marginBottom: 20 },
-  actionButton: { backgroundColor: 'transparent', borderWidth: 1, borderColor: '#333', paddingVertical: 15, alignItems: 'center', marginBottom: 20 },
-  actionButtonText: { color: '#fff', fontSize: 12, letterSpacing: 1, fontWeight: '300' },
+  sectionHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 },
+  sectionTitle: { fontSize: 14, color: '#fff', letterSpacing: 2, fontWeight: '300' },
+  actionIcons: { flexDirection: 'row', gap: 10 },
+  iconButton: { width: 30, height: 30, borderWidth: 1, borderColor: '#333', alignItems: 'center', justifyContent: 'center' },
+  iconText: { color: '#fff', fontSize: 16, fontWeight: '300' },
   loadingText: { color: '#666', textAlign: 'center', fontStyle: 'italic' },
   matchItem: { borderBottomWidth: 1, borderBottomColor: '#111', paddingVertical: 15 },
   matchHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 10 },
+  matchNumberContainer: { width: 30, marginRight: 15 },
+  matchNumber: { fontSize: 12, color: '#666', fontWeight: '300' },
   matchInfo: { flex: 1 },
   matchTeams: { fontSize: 16, color: '#fff', fontWeight: '300', marginBottom: 5 },
   matchMeta: { flexDirection: 'row', flexWrap: 'wrap', marginBottom: 5 },
   matchMetaText: { fontSize: 10, color: '#888' },
   matchScore: { fontSize: 18, color: '#fff', fontWeight: 'bold' },
-  statusBadge: { paddingHorizontal: 8, paddingVertical: 4, marginBottom: 5 },
+  matchBadges: { alignItems: 'flex-end' },
+  badgeRow: { flexDirection: 'row', gap: 5 },
+  statusBadge: { paddingHorizontal: 8, paddingVertical: 4 },
   statusText: { fontSize: 8, color: '#000', fontWeight: 'bold', letterSpacing: 1 },
   hiddenBadge: { backgroundColor: '#666', paddingHorizontal: 8, paddingVertical: 4 },
   hiddenText: { fontSize: 8, color: '#fff', fontWeight: 'bold', letterSpacing: 1 },
-  matchActions: { flexDirection: 'row', justifyContent: 'flex-end', gap: 10 },
-  btn: { backgroundColor: 'transparent', borderWidth: 1, borderColor: '#333', paddingHorizontal: 12, paddingVertical: 8 },
-  btnText: { color: '#fff', fontSize: 10, letterSpacing: 1 },
-  btnSecondary: { borderColor: '#666' },
-  btnSecondaryText: { color: '#666', fontSize: 10, letterSpacing: 1 },
+  matchActions: { flexDirection: 'row', justifyContent: 'flex-end', gap: 8 },
+  iconBtn: { width: 28, height: 28, borderWidth: 1, borderColor: '#333', alignItems: 'center', justifyContent: 'center' },
+  iconBtnDanger: { borderColor: '#666' },
+  iconBtnText: { color: '#fff', fontSize: 12 },
   pagination: { marginTop: 16, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', flexWrap: 'wrap' },
   pageBtn: { minWidth: 30, height: 30, borderWidth: 1, borderColor: '#333', alignItems: 'center', justifyContent: 'center', marginHorizontal: 2 },
   pageBtnActive: { backgroundColor: '#fff', borderColor: '#fff' },
