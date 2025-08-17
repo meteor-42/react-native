@@ -28,8 +28,8 @@ export default function AdminDashboard({ user }) {
   const [editingPlayer, setEditingPlayer] = useState(null);
   const [showEditPlayerModal, setShowEditPlayerModal] = useState(false);
 
-  // Состояние активной вкладки
-  const [activeTab, setActiveTab] = useState('players'); // 'players' | 'matches'
+  // Состояние активной вкладки (матчи первыми)
+  const [activeTab, setActiveTab] = useState('matches'); // 'players' | 'matches'
 
   // Пагинация для игроков
   const [playersPage, setPlayersPage] = useState(1);
@@ -100,7 +100,7 @@ export default function AdminDashboard({ user }) {
       const { data, error } = await supabase
         .from('players')
         .select('*')
-        .order('created_at', { ascending: false });
+        .order('points', { ascending: false });
 
       if (error) {
         Alert.alert('Ошибка', 'Не удалось загрузить список игроков');
@@ -131,15 +131,21 @@ export default function AdminDashboard({ user }) {
       setMatchesLoading(true);
       const { data, error } = await supabase
         .from('matches')
-        .select('*')
-        .order('match_date', { ascending: false });
+        .select('*');
 
       if (error) {
         Alert.alert('Ошибка', 'Не удалось загрузить список матчей');
         return;
       }
 
-      setMatches(data || []);
+      // Сортировка по дате и времени
+      const sortedMatches = (data || []).sort((a, b) => {
+        const dateTimeA = new Date(`${a.match_date}T${a.match_time || '00:00:00'}`);
+        const dateTimeB = new Date(`${b.match_date}T${b.match_time || '00:00:00'}`);
+        return dateTimeA - dateTimeB;
+      });
+
+      setMatches(sortedMatches);
     } catch (error) {
       console.error('Error fetching matches:', error);
     } finally {
@@ -151,35 +157,9 @@ export default function AdminDashboard({ user }) {
 
   return (
     <View style={styles.container}>
-      {/* Статистика */}
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>ПАНЕЛЬ АДМИНИСТРАТОРА</Text>
-        <View style={styles.statsContainer}>
-          <View style={styles.statItem}>
-            <Text style={styles.statNumber}>{stats.totalPlayers}</Text>
-            <Text style={styles.statLabel}>ИГРОКОВ</Text>
-          </View>
-          <View style={styles.statItem}>
-            <Text style={styles.statNumber}>{stats.totalAdmins}</Text>
-            <Text style={styles.statLabel}>АДМИНОВ</Text>
-          </View>
-          <View style={styles.statItem}>
-            <Text style={styles.statNumber}>{matches.length}</Text>
-            <Text style={styles.statLabel}>МАТЧЕЙ</Text>
-          </View>
-        </View>
-      </View>
 
       {/* Вкладки */}
       <View style={styles.tabsContainer}>
-        <TouchableOpacity
-          style={[styles.tabButton, activeTab === 'players' && styles.tabButtonActive]}
-          onPress={() => setActiveTab('players')}
-        >
-          <Text style={[styles.tabButtonText, activeTab === 'players' && styles.tabButtonTextActive]}>
-            Игроки ({players.length})
-          </Text>
-        </TouchableOpacity>
         <TouchableOpacity
           style={[styles.tabButton, activeTab === 'matches' && styles.tabButtonActive]}
           onPress={() => setActiveTab('matches')}
@@ -188,7 +168,40 @@ export default function AdminDashboard({ user }) {
             Матчи ({matches.length})
           </Text>
         </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.tabButton, activeTab === 'players' && styles.tabButtonActive]}
+          onPress={() => setActiveTab('players')}
+        >
+          <Text style={[styles.tabButtonText, activeTab === 'players' && styles.tabButtonTextActive]}>
+            Игроки ({players.length})
+          </Text>
+        </TouchableOpacity>
       </View>
+
+      {/* Управление матчами */}
+      {activeTab === 'matches' && (
+        <MatchesManager
+          matches={matches}
+          setMatches={setMatches}
+          matchesLoading={matchesLoading}
+          setMatchesLoading={setMatchesLoading}
+          fetchMatches={fetchMatches}
+          showAddMatchModal={showAddMatchModal}
+          setShowAddMatchModal={setShowAddMatchModal}
+          editingMatch={editingMatch}
+          setEditingMatch={setEditingMatch}
+          showEditMatchModal={showEditMatchModal}
+          setShowEditMatchModal={setShowEditMatchModal}
+          matchesPage={matchesPage}
+          setMatchesPage={setMatchesPage}
+          matchesPerPage={matchesPerPage}
+          newMatch={newMatch}
+          setNewMatch={setNewMatch}
+          editData={editData}
+          setEditData={setEditData}
+          supabase={supabase}
+        />
+      )}
 
       {/* Управление пользователями */}
       {activeTab === 'players' && (
@@ -212,31 +225,6 @@ export default function AdminDashboard({ user }) {
           setNewPlayer={setNewPlayer}
           editPlayerData={editPlayerData}
           setEditPlayerData={setEditPlayerData}
-          supabase={supabase}
-        />
-      )}
-
-      {/* Управление матчами */}
-      {activeTab === 'matches' && (
-        <MatchesManager
-          matches={matches}
-          setMatches={setMatches}
-          matchesLoading={matchesLoading}
-          setMatchesLoading={setMatchesLoading}
-          fetchMatches={fetchMatches}
-          showAddMatchModal={showAddMatchModal}
-          setShowAddMatchModal={setShowAddMatchModal}
-          editingMatch={editingMatch}
-          setEditingMatch={setEditingMatch}
-          showEditMatchModal={showEditMatchModal}
-          setShowEditMatchModal={setShowEditMatchModal}
-          matchesPage={matchesPage}
-          setMatchesPage={setMatchesPage}
-          matchesPerPage={matchesPerPage}
-          newMatch={newMatch}
-          setNewMatch={setNewMatch}
-          editData={editData}
-          setEditData={setEditData}
           supabase={supabase}
         />
       )}
