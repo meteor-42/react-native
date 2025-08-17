@@ -52,19 +52,20 @@ export default function App() {
 
   const handleLogin = async (email, password) => {
     try {
-      // Проверяем пользователя в таблице players
+      // Проверяем только админов в таблице players
       const { data: playerData, error: playerError } = await supabase
         .from('players')
         .select('*')
         .eq('email', email)
         .eq('password', password)
+        .eq('role', 'admin')
         .single();
 
       if (playerError || !playerData) {
-        throw new Error('Неверный email или пароль');
+        throw new Error('Неверный email или пароль, или недостаточно прав доступа');
       }
 
-      // Создаем временную сессию (поскольку регистрация не используется)
+      // Создаем временную сессию только для админов
       setUser(playerData);
       setSession({ user: { email: playerData.email } });
 
