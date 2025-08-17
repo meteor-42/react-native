@@ -4,11 +4,14 @@ import { supabase } from './lib/supabase';
 import AuthScreen from './components/AuthScreen';
 import DashboardScreen from './components/DashboardScreen';
 import LoadingScreen from './components/LoadingScreen';
+import appJson from './app.json';
 
 export default function App() {
   const [session, setSession] = useState(null);
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState(null);
+
+  const appVersion = appJson?.expo?.version || '0.0.0';
 
   useEffect(() => {
     checkSession();
@@ -85,7 +88,7 @@ export default function App() {
       {session && user ? (
         <DashboardScreen user={user} onLogout={handleLogout} />
       ) : (
-        <AuthScreen onLogin={handleLogin} />
+        <AuthScreen onLogin={handleLogin} version={appVersion} />
       )}
     </SafeAreaProvider>
   );
