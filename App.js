@@ -52,7 +52,7 @@ export default function App() {
 
   const handleLogin = async (email, password) => {
     try {
-      // Проверяем только админов в таблице players
+      // Система доступна только для администраторов
       const { data: playerData, error: playerError } = await supabase
         .from('players')
         .select('*')
@@ -62,10 +62,10 @@ export default function App() {
         .single();
 
       if (playerError || !playerData) {
-        throw new Error('Неверный email или пароль, или недостаточно прав доступа');
+        throw new Error('Доступ разрешен только администраторам');
       }
 
-      // Создаем временную сессию только для админов
+      // Создаем сессию для администратора
       setUser(playerData);
       setSession({ user: { email: playerData.email } });
 
