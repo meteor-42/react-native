@@ -40,7 +40,7 @@ export default function AuthScreen({ onLogin }) {
       >
         <View style={styles.content}>
           <View style={styles.header}>
-            <Text style={styles.title}>ВХОД</Text>
+            <Text style={styles.title}>ЛУДИК</Text>
             <Text style={styles.subtitle}>Добро пожаловать</Text>
           </View>
 
