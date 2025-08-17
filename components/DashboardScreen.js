@@ -8,11 +8,8 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import AdminDashboard from './AdminDashboard';
-import PlayerDashboard from './PlayerDashboard';
 
 export default function DashboardScreen({ user, onLogout }) {
-  const isAdmin = user.role === 'admin';
-
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
@@ -20,9 +17,7 @@ export default function DashboardScreen({ user, onLogout }) {
           <Text style={styles.welcomeText}>ДОБРО ПОЖАЛОВАТЬ</Text>
           <Text style={styles.userName}>{user.name}</Text>
           <View style={styles.roleContainer}>
-            <Text style={[styles.roleText, isAdmin && styles.adminRole]}>
-              {user.role.toUpperCase()}
-            </Text>
+            <Text style={styles.roleText}>АДМИНИСТРАТОР</Text>
           </View>
         </View>
 
@@ -32,11 +27,7 @@ export default function DashboardScreen({ user, onLogout }) {
       </View>
 
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-        {isAdmin ? (
-          <AdminDashboard user={user} />
-        ) : (
-          <PlayerDashboard user={user} />
-        )}
+        <AdminDashboard user={user} />
       </ScrollView>
     </SafeAreaView>
   );
@@ -77,16 +68,12 @@ const styles = StyleSheet.create({
   },
   roleText: {
     fontSize: 10,
-    color: '#fff',
-    backgroundColor: '#333',
+    color: '#000',
+    backgroundColor: '#fff',
     paddingHorizontal: 12,
     paddingVertical: 4,
     letterSpacing: 1,
     fontWeight: '500',
-  },
-  adminRole: {
-    backgroundColor: '#fff',
-    color: '#000',
   },
   logoutButton: {
     backgroundColor: 'transparent',
