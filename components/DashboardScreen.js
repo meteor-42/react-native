@@ -4,7 +4,6 @@ import {
   Text,
   TouchableOpacity,
   StyleSheet,
-  ScrollView,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import AdminDashboard from './AdminDashboard';
@@ -26,9 +25,9 @@ export default function DashboardScreen({ user, onLogout }) {
         </TouchableOpacity>
       </View>
 
-      <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
+      <View style={styles.content}>
         <AdminDashboard user={user} />
-      </ScrollView>
+      </View>
     </SafeAreaView>
   );
 }
