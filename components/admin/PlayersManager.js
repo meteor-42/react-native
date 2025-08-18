@@ -231,6 +231,16 @@ export default function PlayersManager(props) {
               autoCapitalize="none"
             />
 
+            <Text style={forms.inputLabel}>Пароль *</Text>
+            <TextInput
+              style={forms.textInput}
+              value={newPlayer.password || ""}
+              onChangeText={(t) => setNewPlayer((p) => ({ ...p, password: t }))}
+              placeholder="Пароль игрока"
+              placeholderTextColor="#666"
+              secureTextEntry
+            />
+
             <Text style={forms.inputLabel}>Роль</Text>
             <View style={forms.roleRow}>
               {["player", "admin"].map((role) => (
@@ -348,6 +358,18 @@ export default function PlayersManager(props) {
               placeholderTextColor="#666"
               keyboardType="email-address"
               autoCapitalize="none"
+            />
+
+            <Text style={forms.inputLabel}>Новый пароль (необязательно)</Text>
+            <TextInput
+              style={forms.textInput}
+              value={editPlayerData.password || ""}
+              onChangeText={(t) =>
+                setEditPlayerData((p) => ({ ...p, password: t }))
+              }
+              placeholder="Оставьте пустым, чтобы не менять"
+              placeholderTextColor="#666"
+              secureTextEntry
             />
 
             <Text style={forms.inputLabel}>Роль</Text>

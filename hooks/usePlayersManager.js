@@ -1,5 +1,4 @@
 import { useMemo } from 'react';
-import { Alert } from 'react-native';
 
 export function usePlayersManager({
   players,
@@ -37,10 +36,12 @@ export function usePlayersManager({
 
   const createPlayer = async () => {
     const errors = validatePlayerData(newPlayer);
-    if (errors.length) { Alert.alert('Ошибка', errors.join('\n')); return; }
+    if (!newPlayer.password?.trim()) errors.push('Введите пароль');
+    if (errors.length) { return; }
     const payload = {
       name: newPlayer.name.trim(),
       email: newPlayer.email.trim().toLowerCase(),
+      password: newPlayer.password.trim(),
       role: newPlayer.role,
       points: parseInt(newPlayer.points) || 0,
       correct_predictions: parseInt(newPlayer.correct_predictions) || 0,
@@ -48,16 +49,15 @@ export function usePlayersManager({
       rank_position: 0,
     };
     const { error } = await supabase.from('players').insert([payload]);
-    if (error) { Alert.alert('Ошибка', 'Не удалось создать игрока'); return; }
-    setNewPlayer({ name: '', email: '', role: 'player', points: 0, correct_predictions: 0, total_predictions: 0 });
+    if (error) { return; }
+    setNewPlayer({ name: '', email: '', role: 'player', points: 0, correct_predictions: 0, total_predictions: 0, password: '' });
     setShowAddPlayerModal(false);
     fetchPlayers();
-    Alert.alert('Успешно', 'Игрок создан и сохранен в базе');
   };
 
   const updatePlayer = async () => {
     const errors = validatePlayerData(editPlayerData);
-    if (errors.length) { Alert.alert('Ошибка', errors.join('\n')); return; }
+    if (errors.length) { return; }
     const payload = {
       name: editPlayerData.name?.trim(),
       email: editPlayerData.email?.trim().toLowerCase(),
@@ -66,20 +66,21 @@ export function usePlayersManager({
       correct_predictions: parseInt(editPlayerData.correct_predictions) || 0,
       total_predictions: parseInt(editPlayerData.total_predictions) || 0,
     };
+    if (editPlayerData.password?.trim()) {
+      payload.password = editPlayerData.password.trim();
+    }
     const { error } = await supabase.from('players').update(payload).eq('id', editingPlayer.id);
-    if (error) { Alert.alert('Ошибка', 'Не удалось обновить игрока'); return; }
+    if (error) { return; }
     setShowEditPlayerModal(false);
     setEditingPlayer(null);
     setEditPlayerData({});
     fetchPlayers();
-    Alert.alert('Успешно', 'Изменения сохранены в базе');
   };
 
   const deletePlayer = async (playerId) => {
     const { error } = await supabase.from('players').delete().eq('id', playerId);
-    if (error) { Alert.alert('Ошибка', 'Не удалось удалить игрока'); return; }
+    if (error) { return; }
     fetchPlayers();
-    Alert.alert('Успешно', 'Игрок удален');
   };
 
   const openEditPlayer = (player) => {
@@ -91,6 +92,7 @@ export function usePlayersManager({
       points: player.points.toString(),
       correct_predictions: player.correct_predictions.toString(),
       total_predictions: player.total_predictions.toString(),
+      password: '',
     });
     setShowEditPlayerModal(true);
   };
