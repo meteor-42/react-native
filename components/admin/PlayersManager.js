@@ -129,20 +129,24 @@ export default function PlayersManager({
           <Text style={styles.playerName} numberOfLines={1} ellipsizeMode="tail">{item.name}</Text>
           <Text style={styles.playerEmail} numberOfLines={1} ellipsizeMode="tail">{item.email}</Text>
           <View style={styles.statsContainer}>
-            <Text style={styles.playerStatText}>Очки: {item.points}</Text>
-            <Text style={styles.playerStatText}>Прогнозы: {item.correct_predictions}/{item.total_predictions}</Text>
+            <View style={styles.pointsBadge}>
+              <Text style={styles.pointsText}>{item.points} ОЧКОВ</Text>
+            </View>
+            <View style={styles.predictionsBadge}>
+              <Text style={styles.predictionsText}>{item.correct_predictions}/{item.total_predictions}</Text>
+            </View>
           </View>
         </View>
         <View style={styles.playerActionButtons}>
-          <TouchableOpacity 
-            style={styles.actionButton} 
+          <TouchableOpacity
+            style={styles.actionButton}
             onPress={() => openEditPlayer(item)}
             hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
           >
             <Icon name="edit" size={18} color="#fff" />
           </TouchableOpacity>
-          <TouchableOpacity 
-            style={styles.actionButton} 
+          <TouchableOpacity
+            style={styles.actionButton}
             onPress={() => deletePlayer(item.id)}
             hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
           >
@@ -182,15 +186,15 @@ export default function PlayersManager({
       <View style={styles.sectionHeader}>
         <Text style={styles.sectionTitle}>УПРАВЛЕНИЕ ПОЛЬЗОВАТЕЛЯМИ</Text>
         <View style={styles.actionIcons}>
-          <TouchableOpacity 
-            style={styles.iconButton} 
+          <TouchableOpacity
+            style={styles.iconButton}
             onPress={() => setShowAddPlayerModal(true)}
             hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
           >
             <Icon name="person-add" size={20} color="#fff" />
           </TouchableOpacity>
-          <TouchableOpacity 
-            style={styles.iconButton} 
+          <TouchableOpacity
+            style={styles.iconButton}
             onPress={fetchPlayers}
             hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
           >
@@ -227,31 +231,31 @@ export default function PlayersManager({
             </View>
 
             <Text style={styles.inputLabel}>Имя *</Text>
-            <TextInput 
-              style={styles.textInput} 
-              value={newPlayer.name} 
-              onChangeText={(t) => setNewPlayer((p) => ({ ...p, name: t }))} 
-              placeholder="Имя игрока" 
-              placeholderTextColor="#666" 
+            <TextInput
+              style={styles.textInput}
+              value={newPlayer.name}
+              onChangeText={(t) => setNewPlayer((p) => ({ ...p, name: t }))}
+              placeholder="Имя игрока"
+              placeholderTextColor="#666"
             />
 
             <Text style={styles.inputLabel}>Email *</Text>
-            <TextInput 
-              style={styles.textInput} 
-              value={newPlayer.email} 
-              onChangeText={(t) => setNewPlayer((p) => ({ ...p, email: t }))} 
-              placeholder="email@example.com" 
-              placeholderTextColor="#666" 
-              keyboardType="email-address" 
-              autoCapitalize="none" 
+            <TextInput
+              style={styles.textInput}
+              value={newPlayer.email}
+              onChangeText={(t) => setNewPlayer((p) => ({ ...p, email: t }))}
+              placeholder="email@example.com"
+              placeholderTextColor="#666"
+              keyboardType="email-address"
+              autoCapitalize="none"
             />
 
             <Text style={styles.inputLabel}>Роль</Text>
             <View style={styles.roleContainer}>
               {['player', 'admin'].map((role) => (
-                <TouchableOpacity 
-                  key={role} 
-                  style={[styles.roleBtn, newPlayer.role === role && styles.roleBtnActive]} 
+                <TouchableOpacity
+                  key={role}
+                  style={[styles.roleBtn, newPlayer.role === role && styles.roleBtnActive]}
                   onPress={() => setNewPlayer((p) => ({ ...p, role }))}
                 >
                   <Text style={[styles.roleBtnText, newPlayer.role === role && styles.roleBtnTextActive]}>
@@ -264,35 +268,35 @@ export default function PlayersManager({
             <View style={styles.statsRow}>
               <View style={styles.statInputContainer}>
                 <Text style={styles.inputLabel}>Очки</Text>
-                <TextInput 
-                  style={styles.statInput} 
-                  value={String(newPlayer.points)} 
-                  onChangeText={(t) => setNewPlayer((p) => ({ ...p, points: t }))} 
-                  keyboardType="numeric" 
-                  placeholder="0" 
-                  placeholderTextColor="#666" 
+                <TextInput
+                  style={styles.statInput}
+                  value={String(newPlayer.points)}
+                  onChangeText={(t) => setNewPlayer((p) => ({ ...p, points: t }))}
+                  keyboardType="numeric"
+                  placeholder="0"
+                  placeholderTextColor="#666"
                 />
               </View>
               <View style={styles.statInputContainer}>
                 <Text style={styles.inputLabel}>Правильные</Text>
-                <TextInput 
-                  style={styles.statInput} 
-                  value={String(newPlayer.correct_predictions)} 
-                  onChangeText={(t) => setNewPlayer((p) => ({ ...p, correct_predictions: t }))} 
-                  keyboardType="numeric" 
-                  placeholder="0" 
-                  placeholderTextColor="#666" 
+                <TextInput
+                  style={styles.statInput}
+                  value={String(newPlayer.correct_predictions)}
+                  onChangeText={(t) => setNewPlayer((p) => ({ ...p, correct_predictions: t }))}
+                  keyboardType="numeric"
+                  placeholder="0"
+                  placeholderTextColor="#666"
                 />
               </View>
               <View style={styles.statInputContainer}>
                 <Text style={styles.inputLabel}>Всего</Text>
-                <TextInput 
-                  style={styles.statInput} 
-                  value={String(newPlayer.total_predictions)} 
-                  onChangeText={(t) => setNewPlayer((p) => ({ ...p, total_predictions: t }))} 
-                  keyboardType="numeric" 
-                  placeholder="0" 
-                  placeholderTextColor="#666" 
+                <TextInput
+                  style={styles.statInput}
+                  value={String(newPlayer.total_predictions)}
+                  onChangeText={(t) => setNewPlayer((p) => ({ ...p, total_predictions: t }))}
+                  keyboardType="numeric"
+                  placeholder="0"
+                  placeholderTextColor="#666"
                 />
               </View>
             </View>
@@ -320,31 +324,31 @@ export default function PlayersManager({
             </View>
 
             <Text style={styles.inputLabel}>Имя *</Text>
-            <TextInput 
-              style={styles.textInput} 
-              value={editPlayerData.name || ''} 
-              onChangeText={(t) => setEditPlayerData((p) => ({ ...p, name: t }))} 
-              placeholder="Имя игрока" 
-              placeholderTextColor="#666" 
+            <TextInput
+              style={styles.textInput}
+              value={editPlayerData.name || ''}
+              onChangeText={(t) => setEditPlayerData((p) => ({ ...p, name: t }))}
+              placeholder="Имя игрока"
+              placeholderTextColor="#666"
             />
 
             <Text style={styles.inputLabel}>Email *</Text>
-            <TextInput 
-              style={styles.textInput} 
-              value={editPlayerData.email || ''} 
-              onChangeText={(t) => setEditPlayerData((p) => ({ ...p, email: t }))} 
-              placeholder="email@example.com" 
-              placeholderTextColor="#666" 
-              keyboardType="email-address" 
-              autoCapitalize="none" 
+            <TextInput
+              style={styles.textInput}
+              value={editPlayerData.email || ''}
+              onChangeText={(t) => setEditPlayerData((p) => ({ ...p, email: t }))}
+              placeholder="email@example.com"
+              placeholderTextColor="#666"
+              keyboardType="email-address"
+              autoCapitalize="none"
             />
 
             <Text style={styles.inputLabel}>Роль</Text>
             <View style={styles.roleContainer}>
               {['player', 'admin'].map((role) => (
-                <TouchableOpacity 
-                  key={role} 
-                  style={[styles.roleBtn, editPlayerData.role === role && styles.roleBtnActive]} 
+                <TouchableOpacity
+                  key={role}
+                  style={[styles.roleBtn, editPlayerData.role === role && styles.roleBtnActive]}
                   onPress={() => setEditPlayerData((p) => ({ ...p, role }))}
                 >
                   <Text style={[styles.roleBtnText, editPlayerData.role === role && styles.roleBtnTextActive]}>
@@ -357,35 +361,35 @@ export default function PlayersManager({
             <View style={styles.statsRow}>
               <View style={styles.statInputContainer}>
                 <Text style={styles.inputLabel}>Очки</Text>
-                <TextInput 
-                  style={styles.statInput} 
-                  value={editPlayerData.points || ''} 
-                  onChangeText={(t) => setEditPlayerData((p) => ({ ...p, points: t }))} 
-                  keyboardType="numeric" 
-                  placeholder="0" 
-                  placeholderTextColor="#666" 
+                <TextInput
+                  style={styles.statInput}
+                  value={editPlayerData.points || ''}
+                  onChangeText={(t) => setEditPlayerData((p) => ({ ...p, points: t }))}
+                  keyboardType="numeric"
+                  placeholder="0"
+                  placeholderTextColor="#666"
                 />
               </View>
               <View style={styles.statInputContainer}>
                 <Text style={styles.inputLabel}>Правильные</Text>
-                <TextInput 
-                  style={styles.statInput} 
-                  value={editPlayerData.correct_predictions || ''} 
-                  onChangeText={(t) => setEditPlayerData((p) => ({ ...p, correct_predictions: t }))} 
-                  keyboardType="numeric" 
-                  placeholder="0" 
-                  placeholderTextColor="#666" 
+                <TextInput
+                  style={styles.statInput}
+                  value={editPlayerData.correct_predictions || ''}
+                  onChangeText={(t) => setEditPlayerData((p) => ({ ...p, correct_predictions: t }))}
+                  keyboardType="numeric"
+                  placeholder="0"
+                  placeholderTextColor="#666"
                 />
               </View>
               <View style={styles.statInputContainer}>
                 <Text style={styles.inputLabel}>Всего</Text>
-                <TextInput 
-                  style={styles.statInput} 
-                  value={editPlayerData.total_predictions || ''} 
-                  onChangeText={(t) => setEditPlayerData((p) => ({ ...p, total_predictions: t }))} 
-                  keyboardType="numeric" 
-                  placeholder="0" 
-                  placeholderTextColor="#666" 
+                <TextInput
+                  style={styles.statInput}
+                  value={editPlayerData.total_predictions || ''}
+                  onChangeText={(t) => setEditPlayerData((p) => ({ ...p, total_predictions: t }))}
+                  keyboardType="numeric"
+                  placeholder="0"
+                  placeholderTextColor="#666"
                 />
               </View>
             </View>
@@ -450,7 +454,8 @@ const styles = StyleSheet.create({
   playerItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 12,
+    paddingTop: 12,      // ОТСТУП: от разделительной линии до первого элемента
+    paddingBottom: 14,   // ОТСТУП: от последнего элемента до разделительной линии
     borderBottomWidth: 1,
     borderBottomColor: '#252525',
   },
@@ -471,20 +476,40 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#fff',
     fontWeight: '300',
-    marginBottom: 4,
+    marginBottom: 4,    // ОТСТУП: от имени до email
   },
   playerEmail: {
     fontSize: 12,
     color: '#666',
-    marginBottom: 6,
+    marginBottom: 8,    // ОТСТУП: от email до бейджиков очков
   },
   statsContainer: {
     flexDirection: 'row',
-    gap: 12,
+    gap: 8,
+    flexWrap: 'wrap',
+    marginBottom: 4,    // ОТСТУП: от бейджиков до paddingBottom (0 = только paddingBottom)
   },
-  playerStatText: {
+  pointsBadge: {
+    backgroundColor: '#44ff44',
+    paddingHorizontal: 8,
+    paddingVertical: 4
+  },
+  pointsText: {
     fontSize: 10,
-    color: '#888',
+    color: '#000000ff',
+    fontWeight: 'bold',
+    letterSpacing: 0.5,
+  },
+  predictionsBadge: {
+    backgroundColor: '#ffff44',
+    paddingHorizontal: 8,
+    paddingVertical: 4
+  },
+  predictionsText: {
+    fontSize: 10,
+    color: '#000',
+    fontWeight: 'bold',
+    letterSpacing: 0.5,
   },
   playerActionButtons: {
     flexDirection: 'row',
