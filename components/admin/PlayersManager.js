@@ -8,6 +8,7 @@ import {
   TextInput,
 } from "react-native";
 import Icon from "react-native-vector-icons/MaterialIcons";
+import Toast from "react-native-toast-message"; // 👈 добавил
 import { lists, forms } from "../../styles";
 import { usePlayersManager } from "../../hooks/usePlayersManager";
 
@@ -56,6 +57,31 @@ export default function PlayersManager(props) {
     setShowAddPlayerModal,
     setShowEditPlayerModal,
   });
+
+  // 👇 Обертки для вызовов с toast
+  const handleCreatePlayer = async () => {
+    const res = await createPlayer();
+    Toast.show({
+      type: res.success ? "success" : "error",
+      text1: res.message,
+    });
+  };
+
+  const handleUpdatePlayer = async () => {
+    const res = await updatePlayer();
+    Toast.show({
+      type: res.success ? "success" : "error",
+      text1: res.message,
+    });
+  };
+
+  const handleDeletePlayer = async (id) => {
+    const res = await deletePlayer(id);
+    Toast.show({
+      type: res.success ? "success" : "error",
+      text1: res.message,
+    });
+  };
 
   const Pagination = () => {
     if (totalPlayersPages <= 1) return null;
@@ -147,7 +173,7 @@ export default function PlayersManager(props) {
           </TouchableOpacity>
           <TouchableOpacity
             style={lists.actionBtn}
-            onPress={() => deletePlayer(item.id)}
+            onPress={() => handleDeletePlayer(item.id)} // 👈 через обертку
             hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
           >
             <Icon name="delete" size={18} color="#fff" />
@@ -196,6 +222,7 @@ export default function PlayersManager(props) {
         </>
       )}
 
+      {/* Добавление игрока */}
       <Modal
         visible={showAddPlayerModal}
         animationType="slide"
@@ -313,7 +340,7 @@ export default function PlayersManager(props) {
               >
                 <Text style={forms.cancelBtnText}>ОТМЕНА</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={forms.saveBtn} onPress={createPlayer}>
+              <TouchableOpacity style={forms.saveBtn} onPress={handleCreatePlayer}>
                 <Text style={forms.saveBtnText}>СОЗДАТЬ</Text>
               </TouchableOpacity>
             </View>
@@ -321,6 +348,7 @@ export default function PlayersManager(props) {
         </View>
       </Modal>
 
+      {/* Редактирование игрока */}
       <Modal
         visible={showEditPlayerModal}
         animationType="slide"
@@ -415,7 +443,10 @@ export default function PlayersManager(props) {
                   style={forms.statInput}
                   value={editPlayerData.correct_predictions || ""}
                   onChangeText={(t) =>
-                    setEditPlayerData((p) => ({ ...p, correct_predictions: t }))
+                    setEditPlayerData((p) => ({
+                      ...p,
+                      correct_predictions: t,
+                    }))
                   }
                   keyboardType="numeric"
                   placeholder="0"
@@ -444,7 +475,7 @@ export default function PlayersManager(props) {
               >
                 <Text style={forms.cancelBtnText}>ОТМЕНА</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={forms.saveBtn} onPress={updatePlayer}>
+              <TouchableOpacity style={forms.saveBtn} onPress={handleUpdatePlayer}>
                 <Text style={forms.saveBtnText}>СОХРАНИТЬ</Text>
               </TouchableOpacity>
             </View>

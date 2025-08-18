@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import Toast from "react-native-toast-message";
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { supabase } from './lib/supabase';
 import AuthScreen from './components/AuthScreen';
@@ -14,20 +15,26 @@ export default function App() {
   const appVersion = appJson?.expo?.version || '0.0.0';
 
   useEffect(() => {
-    checkSession();
+    const init = async () => {
+      await checkSession();
+      setLoading(false);
+    };
+    init();
   }, []);
 
   const checkSession = async () => {
     try {
-      const { data: { session } } = await supabase.auth.getSession();
+      const { data: { session }, error } = await supabase.auth.getSession();
+      if (error) {
+        console.error("Ошибка при проверке сессии:", error.message);
+        return;
+      }
       setSession(session);
-      if (session) {
+      if (session?.user?.email) {
         await fetchUserData(session.user.email);
       }
     } catch (error) {
-      console.error('Error checking session:', error);
-    } finally {
-      setLoading(false);
+      console.error("Ошибка checkSession:", error);
     }
   };
 
@@ -40,19 +47,29 @@ export default function App() {
         .single();
 
       if (error) {
-        console.error('Error fetching user data:', error);
+        console.error('Ошибка загрузки данных пользователя:', error.message);
+        Toast.show({
+          type: 'error',
+          text1: 'Ошибка',
+          text2: 'Не удалось загрузить данные пользователя',
+        });
         return;
       }
 
       setUser(data);
     } catch (error) {
-      console.error('Error fetching user data:', error);
+      console.error('Ошибка fetchUserData:', error);
+      Toast.show({
+        type: 'error',
+        text1: 'Ошибка',
+        text2: 'Произошла ошибка при получении данных пользователя',
+      });
     }
   };
 
   const handleLogin = async (email, password) => {
     try {
-      // Система доступна только для администраторов
+      // Проверка на роль администратора
       const { data: playerData, error: playerError } = await supabase
         .from('players')
         .select('*')
@@ -65,12 +82,23 @@ export default function App() {
         throw new Error('Доступ разрешен только администраторам');
       }
 
-      // Создаем сессию для администратора
+      // Устанавливаем "сессию" вручную (т.к. используем кастомную auth)
       setUser(playerData);
       setSession({ user: { email: playerData.email } });
 
+      Toast.show({
+        type: 'success',
+        text1: 'Успешный вход',
+        text2: `Добро пожаловать, ${playerData.name}`,
+      });
+
       return { success: true };
     } catch (error) {
+      Toast.show({
+        type: 'error',
+        text1: 'Ошибка входа',
+        text2: error.message,
+      });
       return { success: false, error: error.message };
     }
   };
@@ -78,6 +106,10 @@ export default function App() {
   const handleLogout = () => {
     setSession(null);
     setUser(null);
+    Toast.show({
+      type: 'info',
+      text1: 'Выход выполнен',
+    });
   };
 
   if (loading) {
@@ -86,6 +118,7 @@ export default function App() {
 
   return (
     <SafeAreaProvider>
+      <Toast />
       {session && user ? (
         <DashboardScreen user={user} onLogout={handleLogout} />
       ) : (

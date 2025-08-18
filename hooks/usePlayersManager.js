@@ -37,7 +37,9 @@ export function usePlayersManager({
   const createPlayer = async () => {
     const errors = validatePlayerData(newPlayer);
     if (!newPlayer.password?.trim()) errors.push('Введите пароль');
-    if (errors.length) { return; }
+    if (errors.length) {
+      return { success: false, message: errors.join(', ') };
+    }
     const payload = {
       name: newPlayer.name.trim(),
       email: newPlayer.email.trim().toLowerCase(),
@@ -49,15 +51,20 @@ export function usePlayersManager({
       rank_position: 0,
     };
     const { error } = await supabase.from('players').insert([payload]);
-    if (error) { return; }
+    if (error) {
+      return { success: false, message: error.message };
+    }
     setNewPlayer({ name: '', email: '', role: 'player', points: 0, correct_predictions: 0, total_predictions: 0, password: '' });
     setShowAddPlayerModal(false);
     fetchPlayers();
+    return { success: true, message: 'Игрок успешно создан' };
   };
 
   const updatePlayer = async () => {
     const errors = validatePlayerData(editPlayerData);
-    if (errors.length) { return; }
+    if (errors.length) {
+      return { success: false, message: errors.join(', ') };
+    }
     const payload = {
       name: editPlayerData.name?.trim(),
       email: editPlayerData.email?.trim().toLowerCase(),
@@ -70,17 +77,23 @@ export function usePlayersManager({
       payload.password = editPlayerData.password.trim();
     }
     const { error } = await supabase.from('players').update(payload).eq('id', editingPlayer.id);
-    if (error) { return; }
+    if (error) {
+      return { success: false, message: error.message };
+    }
     setShowEditPlayerModal(false);
     setEditingPlayer(null);
     setEditPlayerData({});
     fetchPlayers();
+    return { success: true, message: 'Игрок успешно обновлён' };
   };
 
   const deletePlayer = async (playerId) => {
     const { error } = await supabase.from('players').delete().eq('id', playerId);
-    if (error) { return; }
+    if (error) {
+      return { success: false, message: error.message };
+    }
     fetchPlayers();
+    return { success: true, message: 'Игрок удалён' };
   };
 
   const openEditPlayer = (player) => {
@@ -97,7 +110,9 @@ export function usePlayersManager({
     setShowEditPlayerModal(true);
   };
 
-  const goToPlayersPage = (p) => { if (p >= 1 && p <= totalPlayersPages) setPlayersPage(p); };
+  const goToPlayersPage = (p) => {
+    if (p >= 1 && p <= totalPlayersPages) setPlayersPage(p);
+  };
 
   return {
     totalPlayersPages,
