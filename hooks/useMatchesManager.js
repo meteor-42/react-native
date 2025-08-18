@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { Alert } from 'react-native';
 
 export function useMatchesManager({
   matches,
@@ -50,7 +51,7 @@ export function useMatchesManager({
 
   const createMatch = async () => {
     const errors = validateMatchData(newMatch);
-    if (errors.length) { alert(errors.join('\n')); return; }
+    if (errors.length) { Alert.alert('Ошибка', errors.join('\n')); return; }
     const payload = {
       home_team: newMatch.home_team.trim(),
       away_team: newMatch.away_team.trim(),
@@ -64,15 +65,16 @@ export function useMatchesManager({
       away_score: newMatch.away_score,
     };
     const { error } = await supabase.from('matches').insert([payload]);
-    if (error) { alert('Не удалось создать матч'); return; }
+    if (error) { Alert.alert('Ошибка', 'Не удалось создать матч'); return; }
     setNewMatch({ home_team: '', away_team: '', match_date: '', match_time: '', league: 'РПЛ', tour: '', status: 'upcoming', is_visible: true, home_score: null, away_score: null });
     setShowAddMatchModal(false);
     fetchMatches();
+    Alert.alert('Успешно', 'Матч создан и сохранен в базе');
   };
 
   const updateMatch = async () => {
     const errors = validateMatchData(editData);
-    if (errors.length) { alert(errors.join('\n')); return; }
+    if (errors.length) { Alert.alert('Ошибка', errors.join('\n')); return; }
     const payload = {
       home_team: editData.home_team?.trim(),
       away_team: editData.away_team?.trim(),
@@ -86,17 +88,19 @@ export function useMatchesManager({
       away_score: editData.away_score !== '' ? (editData.away_score ? parseInt(editData.away_score) : null) : null,
     };
     const { error } = await supabase.from('matches').update(payload).eq('id', editingMatch.id);
-    if (error) { alert('Не удалось обновить матч'); return; }
+    if (error) { Alert.alert('Ошибка', 'Не удалось обновить матч'); return; }
     setShowEditMatchModal(false);
     setEditingMatch(null);
     setEditData({});
     fetchMatches();
+    Alert.alert('Успешно', 'Изменения по матчу сохранены в базе');
   };
 
   const deleteMatch = async (matchId) => {
     const { error } = await supabase.from('matches').delete().eq('id', matchId);
-    if (error) { alert('Не удалось удалить матч'); return; }
+    if (error) { Alert.alert('Ошибка', 'Не удалось удалить матч'); return; }
     fetchMatches();
+    Alert.alert('Успешно', 'Матч удален');
   };
 
   const openEditMatch = (match) => {

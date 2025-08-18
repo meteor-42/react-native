@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { Alert } from 'react-native';
 
 export function usePlayersManager({
   players,
@@ -36,7 +37,7 @@ export function usePlayersManager({
 
   const createPlayer = async () => {
     const errors = validatePlayerData(newPlayer);
-    if (errors.length) { alert(errors.join('\n')); return; }
+    if (errors.length) { Alert.alert('Ошибка', errors.join('\n')); return; }
     const payload = {
       name: newPlayer.name.trim(),
       email: newPlayer.email.trim().toLowerCase(),
@@ -47,15 +48,16 @@ export function usePlayersManager({
       rank_position: 0,
     };
     const { error } = await supabase.from('players').insert([payload]);
-    if (error) { alert('Не удалось создать игрока'); return; }
+    if (error) { Alert.alert('Ошибка', 'Не удалось создать игрока'); return; }
     setNewPlayer({ name: '', email: '', role: 'player', points: 0, correct_predictions: 0, total_predictions: 0 });
     setShowAddPlayerModal(false);
     fetchPlayers();
+    Alert.alert('Успешно', 'Игрок создан и сохранен в базе');
   };
 
   const updatePlayer = async () => {
     const errors = validatePlayerData(editPlayerData);
-    if (errors.length) { alert(errors.join('\n')); return; }
+    if (errors.length) { Alert.alert('Ошибка', errors.join('\n')); return; }
     const payload = {
       name: editPlayerData.name?.trim(),
       email: editPlayerData.email?.trim().toLowerCase(),
@@ -65,17 +67,19 @@ export function usePlayersManager({
       total_predictions: parseInt(editPlayerData.total_predictions) || 0,
     };
     const { error } = await supabase.from('players').update(payload).eq('id', editingPlayer.id);
-    if (error) { alert('Не удалось обновить игрока'); return; }
+    if (error) { Alert.alert('Ошибка', 'Не удалось обновить игрока'); return; }
     setShowEditPlayerModal(false);
     setEditingPlayer(null);
     setEditPlayerData({});
     fetchPlayers();
+    Alert.alert('Успешно', 'Изменения сохранены в базе');
   };
 
   const deletePlayer = async (playerId) => {
     const { error } = await supabase.from('players').delete().eq('id', playerId);
-    if (error) { alert('Не удалось удалить игрока'); return; }
+    if (error) { Alert.alert('Ошибка', 'Не удалось удалить игрока'); return; }
     fetchPlayers();
+    Alert.alert('Успешно', 'Игрок удален');
   };
 
   const openEditPlayer = (player) => {
