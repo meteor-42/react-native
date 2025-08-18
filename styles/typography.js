@@ -10,4 +10,4 @@ export const typography = {
   letterTight: 0.5,
   letterWide: 1,
   letterWider: 2,
-};
+}; 

@@ -5,7 +5,7 @@ import { typography } from './typography';
 
 export const lists = StyleSheet.create({
   section: { flex: 1, backgroundColor: colors.background, paddingHorizontal: spacing.lg, paddingTop: spacing.lg },
-  sectionHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: spacing.lg, borderBottomWidth: 1, borderBottomColor: colors.border, paddingBottom: spacing.sm },
+  sectionHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', borderBottomWidth: 1, borderBottomColor: colors.border, paddingBottom: spacing.sm },
   sectionTitle: { fontSize: typography.sm, color: colors.text, fontWeight: typography.weightLight, letterSpacing: typography.letterWide },
   actionIcons: { flexDirection: 'row', gap: spacing.md },
   iconButton: { padding: 4 },
@@ -15,18 +15,18 @@ export const lists = StyleSheet.create({
   // item blocks
   number:   { fontSize: typography.sm, color: '#666', fontWeight: typography.weightLight },
   info:     { flex: 1, marginRight: spacing.md },
-  title:    { fontSize: typography.lg, color: colors.text, fontWeight: typography.weightLight, marginBottom: 6 },
+  title:    { fontSize: typography.lg, color: colors.text, fontWeight: typography.weightLight, marginBottom: 0 },
   subtitle: { fontSize: typography.sm, color: '#666' },
   numberContainer: { width: 24, marginRight: spacing.md },
-  row: { flexDirection: 'row', alignItems: 'center', paddingVertical: spacing.md, borderBottomWidth: 1, borderBottomColor: '#252525' },
-  metaRow: { flexDirection: 'row', flexWrap: 'wrap', marginBottom: 6 },
+  row: { flexDirection: 'row', alignItems: 'center', paddingVertical: spacing.sm, borderBottomWidth: 1, borderBottomColor: '#252525' },
+  metaRow: { flexDirection: 'row', flexWrap: 'wrap', marginBottom: 4 },
   actionsRow: { flexDirection: 'row', gap: spacing.md },
   actionBtn: { padding: 6 },
   // badges
-  badge: { paddingHorizontal: spacing.md, paddingVertical: 4 },
-  badgeTextDark: { fontSize: typography.xs, color: colors.accentLightText, fontWeight: 'bold', letterSpacing: typography.letterWide, paddingVertical: 4 },
-  badgeTextLight: { fontSize: typography.xs, color: colors.text, fontWeight: 'bold', letterSpacing: typography.letterWide, paddingVertical: 4 },
-  hiddenBadge: { backgroundColor: '#666', paddingHorizontal: spacing.md, paddingVertical: 4 },
+  badge: { paddingHorizontal: spacing.md, paddingVertical: 2 },
+  badgeTextDark: { fontSize: typography.xs, color: colors.accentLightText, fontWeight: 'bold', letterSpacing: typography.letterWide, paddingVertical: 2 },
+  badgeTextLight: { fontSize: typography.xs, color: colors.text, fontWeight: 'bold', letterSpacing: typography.letterWide, paddingVertical: 2 },
+  hiddenBadge: { backgroundColor: '#666', paddingHorizontal: spacing.md, paddingVertical: 2 },
   // score
   score: { fontSize: 16, color: colors.text, fontWeight: 'bold', marginRight: spacing.md },
   // pagination
