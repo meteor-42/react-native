@@ -9,6 +9,7 @@ import {
   Switch,
 } from "react-native";
 import Icon from "react-native-vector-icons/MaterialIcons";
+import Toast from "react-native-toast-message";
 import { lists, forms } from "../../styles";
 import { useMatchesManager } from "../../hooks/useMatchesManager";
 
@@ -61,6 +62,31 @@ export default function MatchesManager(props) {
     setShowAddMatchModal,
     setShowEditMatchModal,
   });
+
+  // Обертки для вызовов с toast уведомлениями
+  const handleCreateMatch = async () => {
+    const res = await createMatch();
+    Toast.show({
+      type: res.success ? "success" : "error",
+      text1: res.message,
+    });
+  };
+
+  const handleUpdateMatch = async () => {
+    const res = await updateMatch();
+    Toast.show({
+      type: res.success ? "success" : "error",
+      text1: res.message,
+    });
+  };
+
+  const handleDeleteMatch = async (id) => {
+    const res = await deleteMatch(id);
+    Toast.show({
+      type: res.success ? "success" : "error",
+      text1: res.message,
+    });
+  };
 
   const Pagination = () => {
     if (totalMatchesPages <= 1) return null;
@@ -165,7 +191,7 @@ export default function MatchesManager(props) {
           </TouchableOpacity>
           <TouchableOpacity
             style={lists.actionBtn}
-            onPress={() => deleteMatch(item.id)}
+            onPress={() => handleDeleteMatch(item.id)}
             hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
           >
             <Icon name="delete" size={18} color="#fff" />
@@ -319,7 +345,7 @@ export default function MatchesManager(props) {
               >
                 <Text style={forms.cancelBtnText}>ОТМЕНА</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={forms.saveBtn} onPress={createMatch}>
+              <TouchableOpacity style={forms.saveBtn} onPress={handleCreateMatch}>
                 <Text style={forms.saveBtnText}>СОЗДАТЬ</Text>
               </TouchableOpacity>
             </View>
@@ -484,7 +510,7 @@ export default function MatchesManager(props) {
               >
                 <Text style={forms.cancelBtnText}>ОТМЕНА</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={forms.saveBtn} onPress={updateMatch}>
+              <TouchableOpacity style={forms.saveBtn} onPress={handleUpdateMatch}>
                 <Text style={forms.saveBtnText}>СОХРАНИТЬ</Text>
               </TouchableOpacity>
             </View>

@@ -4,6 +4,7 @@ import PlayersManager from './admin/PlayersManager';
 import MatchesManager from './admin/MatchesManager';
 import { lists, layout } from '../styles';
 import { useAdminDashboard } from '../hooks/useAdminDashboard';
+import { supabase } from '../lib/supabase';
 
 export default function AdminDashboard() {
   const state = useAdminDashboard();
@@ -49,6 +50,7 @@ export default function AdminDashboard() {
           setNewMatch={state.setNewMatch}
           editData={state.editData}
           setEditData={state.setEditData}
+          supabase={supabase}
         />
       )}
 
@@ -73,6 +75,7 @@ export default function AdminDashboard() {
           setNewPlayer={state.setNewPlayer}
           editPlayerData={state.editPlayerData}
           setEditPlayerData={state.setEditPlayerData}
+          supabase={supabase}
         />
       )}
     </View>

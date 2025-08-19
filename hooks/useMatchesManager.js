@@ -59,7 +59,7 @@ export function useMatchesManager({
     const errors = validateMatchData(newMatch);
     if (newMatch.match_date && !isValidDate(newMatch.match_date.trim())) errors.push('Введите дату в формате ГГГГ-ММ-ДД');
     if (newMatch.match_time && !isValidTime(newMatch.match_time.trim())) errors.push('Введите время в формате ЧЧ:ММ');
-    if (errors.length) { return false; }
+    if (errors.length) { return { success: false, message: errors.join(', ') }; }
 
     const payload = {};
     const raw = {
@@ -90,18 +90,18 @@ export function useMatchesManager({
     });
 
     const { error } = await supabase.from('matches').insert([payload]);
-    if (error) { return false; }
+    if (error) { return { success: false, message: error.message }; }
     setNewMatch({ home_team: '', away_team: '', match_date: '', match_time: '', league: 'РПЛ', tour: '', status: 'upcoming', is_visible: true, home_score: null, away_score: null });
     setShowAddMatchModal(false);
     await fetchMatches();
-    return true;
+    return { success: true, message: 'Матч успешно создан' };
   };
 
   const updateMatch = async () => {
     const errors = validateMatchData(editData);
     if (editData.match_date && !isValidDate(editData.match_date.trim())) errors.push('Введите дату в формате ГГГГ-ММ-ДД');
     if (editData.match_time && !isValidTime(editData.match_time.trim())) errors.push('Введите время в формате ЧЧ:ММ');
-    if (errors.length) { return false; }
+    if (errors.length) { return { success: false, message: errors.join(', ') }; }
 
     const payload = {};
     const raw = {
@@ -132,19 +132,19 @@ export function useMatchesManager({
     });
 
     const { error } = await supabase.from('matches').update(payload).eq('id', editingMatch.id);
-    if (error) { return false; }
+    if (error) { return { success: false, message: error.message }; }
     setShowEditMatchModal(false);
     setEditingMatch(null);
     setEditData({});
     await fetchMatches();
-    return true;
+    return { success: true, message: 'Матч успешно обновлен' };
   };
 
   const deleteMatch = async (matchId) => {
     const { error } = await supabase.from('matches').delete().eq('id', matchId);
-    if (error) { return false; }
+    if (error) { return { success: false, message: error.message }; }
     await fetchMatches();
-    return true;
+    return { success: true, message: 'Матч удален' };
   };
 
   const openEditMatch = (match) => {
